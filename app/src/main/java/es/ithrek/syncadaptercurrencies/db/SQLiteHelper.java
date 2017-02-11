@@ -17,7 +17,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " abbreviation TEXT NOT NULL," +
             " name TEXT NOT NULL," +
-            " value REAL NOT NULL);";
+            " value REAL NOT NULL" +
+            " id_backend INTEGER NOT NULL DEFAULT 0" +
+            " is_read INTEGER NOT NULL DEFAULT 0);";
 
 
     /**
