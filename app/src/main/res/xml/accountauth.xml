@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><!-- CHECK SCHEMA-->
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="es.ithrek.android"
+    android:icon="@android:drawable/star_on"
+    android:smallIcon="@android:drawable/star_on"
+    android:label="SyncAdapter" />

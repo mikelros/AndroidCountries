@@ -1,17 +1,23 @@
 package es.ithrek.syncadaptercurrencies.models;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by Mikel on 11/02/17.
  */
 
 public class Currency {
 
-    private int id;
+    @Expose
+    private Integer id;
 
+    @Expose
     private String name;
 
+    @Expose
     private String abbreviation;
 
+    @Expose
     private Integer value;
 
     private Integer id_backend;
@@ -24,7 +30,7 @@ public class Currency {
     public Currency() {
     }
 
-    public Currency(int id, String name, String abbreviation, Integer value) {
+    public Currency(Integer id, String name, String abbreviation, Integer value) {
         super();
         this.id = id;
         this.name = name;
@@ -32,7 +38,7 @@ public class Currency {
         this.value = value;
     }
 
-    public Currency(int id, String name, String abbreviation, Integer value, Integer id_backend) {
+    public Currency(Integer id, String name, String abbreviation, Integer value, Integer id_backend) {
         this.id = id;
         this.name = name;
         this.abbreviation = abbreviation;
@@ -40,7 +46,7 @@ public class Currency {
         this.id_backend = id_backend;
     }
 
-    public Currency(int id, String name, String abbreviation, Integer value, Integer id_backend, Integer is_read) {
+    public Currency(Integer id, String name, String abbreviation, Integer value, Integer id_backend, Integer is_read) {
         this.id = id;
         this.name = name;
         this.abbreviation = abbreviation;
@@ -49,11 +55,11 @@ public class Currency {
         this.is_read = is_read;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -95,5 +101,17 @@ public class Currency {
 
     public void setIs_read(Integer is_read) {
         this.is_read = is_read;
+    }
+
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", abbreviation='" + abbreviation + '\'' +
+                ", value=" + value +
+                ", id_backend=" + id_backend +
+                ", is_read=" + is_read +
+                '}';
     }
 }

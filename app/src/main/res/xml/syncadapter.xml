@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="es.ithrek.syncadaptercurrencies.sqlprovider"
+    android:accountType="es.ithrek.android"
+    android:userVisible="true"
+    android:allowParallelSyncs="false"
+    android:isAlwaysSyncable="false"
+    android:supportsUploading="true" />

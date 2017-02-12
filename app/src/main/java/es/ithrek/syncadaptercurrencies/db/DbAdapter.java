@@ -64,7 +64,7 @@ public class DbAdapter {
      */
     public long insertCurrency(Currency currency) {
         ContentValues row = new ContentValues();
-        Log.d("DEBUG", "DbAdapter> Insert: " + currency.getName() + " | id: " + currency.getId());
+        Log.d("DEBUG", "DbAdapter> Insert: " + currency.toString());
 
         row.put("name", currency.getName());
         row.put("_id", currency.getId());
