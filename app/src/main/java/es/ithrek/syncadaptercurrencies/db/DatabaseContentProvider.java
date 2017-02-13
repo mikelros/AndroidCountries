@@ -1,6 +1,7 @@
 package es.ithrek.syncadaptercurrencies.db;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -77,25 +78,33 @@ public class DatabaseContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
+        ContentResolver cr = getContext().getContentResolver();
+        Cursor c;
+
         Log.d("DEBUG", "ContentProvider> query " + uri + " match:" + uriMatcher.match(uri));
         switch (uriMatcher.match(uri)) {
             case 1:
                 Log.d("PELLODEBUG", "query to 1. ");
-                return dbAdapter.getCurrencies();
+                c = dbAdapter.getCurrencies();
+                c.setNotificationUri(cr, uri);
+                return c;
             case 2:
                 Log.d("PELLODEBUG", "query to 2. " + uri.getLastPathSegment());
                 //return dbAdapter.getCurrency();
             case 3:
                 Log.d("PELLODEBUG", "query to 3. " + uri.getLastPathSegment());
-                return dbAdapter.getLastBackendRow();
+                c = dbAdapter.getLastBackendRow();
+                c.setNotificationUri(cr, uri);
+                return c;
             case 4:
                 Log.d("PELLODEBUG", "query to 4. " + uri.getLastPathSegment());
-                return dbAdapter.getLastLocalRow();
+                c = dbAdapter.getLastLocalRow();
+                c.setNotificationUri(cr, uri);
+                return c;
 
             default:
                 break;
         }
-
 
         return mCursor;
     }
@@ -127,7 +136,7 @@ public class DatabaseContentProvider extends ContentProvider {
         currency.setValue(values.getAsInteger("value"));
         currency.setId_backend(values.getAsInteger("id_backend"));
         currency.setIs_read(values.getAsInteger("is_read"));
-
+        getContext().getContentResolver().notifyChange(uri, null);
         dbAdapter.insertCurrency(currency);
         Uri resultUri = Uri.parse("content://es.ithrek.syncadaptercurrencies.sqlprovider/1");
         return resultUri;
@@ -139,7 +148,7 @@ public class DatabaseContentProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         Log.d("PELLODEBUG", "CP> " + uri);
-
+        getContext().getContentResolver().notifyChange(uri, null);
         return dbAdapter.setCurrencyBackendReceived();
 
     }

@@ -10,64 +10,53 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SyncRequest;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import es.ithrek.syncadaptercurrencies.R;
 import es.ithrek.syncadaptercurrencies.auth.Authenticator;
+import es.ithrek.syncadaptercurrencies.models.Currency;
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private EditText editTextNew;
-    private String contentUri = "content://es.ithrek.syncadaptercurrencies.sqlprovider";
-
-
-    // This is the Adapter being used to display the list's data.
-    SimpleCursorAdapter mAdapter;
-
-    // If non-null, this is the current filter the user has provided.
-    String mCurFilter;
-
     private ListView listView;
+    private String contentUri = "content://es.ithrek.syncadaptercurrencies.sqlprovider";
+    private CustomListAdapter customizedListAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ContentResolver contentResolver;
-
     private Account account;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.listView);
-        editTextNew = (EditText) findViewById(R.id.editTextNew);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
-        // Create an empty adapter we will use to display the loaded data.
-        mAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_2, null,
-                new String[]{"_id", "name"},
-                new int[]{android.R.id.text1, android.R.id.text2}, 0);
-
-        listView.setAdapter(mAdapter);
+        setupCustomList(null);
 
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
         getLoaderManager().initLoader(0, null, this);
 
-        // Sync Adapter
-        // account = new Account(DummyAuthenticator.ACCOUNT_NAME, DummyAuthenticator.ACCOUNT_TYPE);
         account = CreateSyncAccount(this);
         String authority = "es.ithrek.syncadaptercurrencies.sqlprovider";
 
@@ -91,6 +80,24 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
         );
+    }
+
+    private void setupCustomList(Cursor cursor) {
+        customizedListAdapter = new CustomListAdapter(this, cursor);
+
+        listView = (ListView) findViewById(R.id.listView);
+
+        listView.setAdapter(customizedListAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                //Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
+                //myIntent.putExtra("Meetup", meetups.get(position));
+                //startActivity(myIntent);
+            }
+        });
+
     }
 
     public static Account CreateSyncAccount(Context context) {
@@ -121,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements
         return newAccount;
     }
 
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created.  This
         // sample only has one Loader, so we don't care about the ID.
@@ -132,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements
 
         Log.d("PELLODEBUG", "Creating loader");
         return new CursorLoader(this, baseUri,  // The content URI of the words table
-                new String[]{"_id", "name"},               // The columns to return for each row
+                new String[]{"_id", "name", "abbreviation", "value"},               // The columns to return for each row
                 "",                        // Selection criteria parameters
                 new String[]{""},                     // Selection criteria values
                 "");                            // The sort order for the returned rows
@@ -143,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         // Swap the new cursor in.  (The framework will take care of closing the
         // old cursor once we return.)
-        mAdapter.swapCursor(cursor);
+        customizedListAdapter.swapCursor(cursor);
 
         cursor.moveToFirst();
         String data = "";
@@ -160,34 +168,7 @@ public class MainActivity extends AppCompatActivity implements
         // This is called when the last Cursor provided to onLoadFinished()
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
-        mAdapter.swapCursor(null);
-    }
-
-    /**
-     * add a new Task
-     *
-     * @param view
-     */
-    public void addTask(View view) {
-        Log.d("PELLODEBUG", "New task > button pressed.");
-        Uri uri = Uri.parse(contentUri);
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put("name", editTextNew.getText().toString());
-        contentValues.put("id_backend", 0);
-        contentValues.put("is_read", 0);
-        contentValues.put("value", 1);
-        contentValues.put("abbreviation", "an");
-
-        // We finally make the request to the content provider
-        Uri resultUri = getContentResolver().insert(
-                uri,   // The content URI
-                contentValues
-        );
-        Log.d("PELLODEBUG", "Result Uri after insert: " + uri.toString());
-        mAdapter.notifyDataSetChanged();
-        getLoaderManager().getLoader(0).forceLoad();
-
+        customizedListAdapter.swapCursor(null);
     }
 
     public void syncNow(View view) {
@@ -203,6 +184,4 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(MainActivity.this, "Done!", Toast.LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
     }
-
-
 }
