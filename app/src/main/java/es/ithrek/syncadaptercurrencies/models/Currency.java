@@ -22,8 +22,6 @@ public class Currency {
 
     private Integer id_backend;
 
-    private Integer is_read;
-
     /**
      * default constructor
      */
@@ -44,15 +42,6 @@ public class Currency {
         this.abbreviation = abbreviation;
         this.value = value;
         this.id_backend = id_backend;
-    }
-
-    public Currency(Integer id, String name, String abbreviation, Integer value, Integer id_backend, Integer is_read) {
-        this.id = id;
-        this.name = name;
-        this.abbreviation = abbreviation;
-        this.value = value;
-        this.id_backend = id_backend;
-        this.is_read = is_read;
     }
 
     public Integer getId() {
@@ -95,14 +84,6 @@ public class Currency {
         this.id_backend = id_backend;
     }
 
-    public Integer getIs_read() {
-        return is_read;
-    }
-
-    public void setIs_read(Integer is_read) {
-        this.is_read = is_read;
-    }
-
     @Override
     public String toString() {
         return "Currency{" +
@@ -111,7 +92,6 @@ public class Currency {
                 ", abbreviation='" + abbreviation + '\'' +
                 ", value=" + value +
                 ", id_backend=" + id_backend +
-                ", is_read=" + is_read +
                 '}';
     }
 }

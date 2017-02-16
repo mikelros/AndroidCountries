@@ -18,8 +18,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             " abbreviation TEXT NOT NULL," +
             " name TEXT NOT NULL," +
             " value REAL NOT NULL," +
-            " id_backend INTEGER NOT NULL DEFAULT 0," +
-            " is_read INTEGER NOT NULL DEFAULT 0);";
+            " id_backend INTEGER NOT NULL DEFAULT 0);";
 
 
     /**

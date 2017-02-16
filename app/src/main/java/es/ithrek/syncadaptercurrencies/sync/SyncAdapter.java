@@ -63,14 +63,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             // Get Last backend_id locally
             cursor = provider.query(
                     Uri.parse(contentUri + "/currencies/last/backend"),
-                    new String[]{"_id", "name", "value", "abbreviation", "id_backend", "is_read"},
+                    new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
                     "",                        // The columns to return for each row
                     new String[]{""},                     // Selection criteria
                     "");
 
             if (cursor.getCount() > 0) {
                 lastBackendId = cursor.getInt(cursor.getColumnIndex("id_backend"));
-                Log.d("DEBUG", "backend_id:" + cursor.getInt(cursor.getColumnIndex("id_backend")));
+                Log.d("DEBUG", "id_backend:" + cursor.getInt(cursor.getColumnIndex("id_backend")));
             }
             Log.d("DEBUG'", "Last backend Id: " + lastBackendId);
 
@@ -83,7 +83,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 contentValues.put("name", currency.getName());
                 contentValues.put("abbreviation", currency.getAbbreviation());
                 contentValues.put("value", currency.getValue());
-                contentValues.put("id_backend", currency.getId()); //currency id of the backend
+                contentValues.put("id_backend", currency.getId());
 
                 // We finally make the request to the content provider
                 Uri resultUri = provider.insert(
@@ -96,10 +96,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             /////////////////// UPDATE FROM LOCAL TO BACKEND
             // get all local record with id_backend = 0
             // send them to backend
-            // update local id_backend with -1
             cursor = provider.query(
                     Uri.parse(contentUri + "/currencies/last/local"),   // The content URI of the words table
-                    new String[]{"_id", "name", "value", "abbreviation", "id_backend", "is_read"},
+                    new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
                     "",                        // The columns to return for each row
                     new String[]{""},                     // Selection criteria
                     "");
@@ -109,6 +108,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                 // send array of currencies
                 cursor.moveToFirst();
+                ContentValues contentValues = null;
                 while (cursor.isAfterLast() == false) {
 
                     Currency currency = new Currency();
@@ -120,7 +120,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Log.d("SYNCADAPTER", currency.toString());
                     Log.d("SYNCADAPTER", "cursor: " + cursor.getString(3));
 
-                    currencyManager.createCurrency(currency);
+                    int id = currencyManager.createCurrency(currency);
+                    contentValues = new ContentValues();
+                    contentValues.put("_id", cursor.getInt(cursor.getColumnIndex("_id")));
+                    contentValues.put("name", currency.getName());
+                    contentValues.put("abbreviation", currency.getAbbreviation());
+                    contentValues.put("value", currency.getValue());
+                    contentValues.put("id_backend", id);
                     Log.d("DEBUG", "Sent data to backend: " + currency.getName());
 
                     cursor.moveToNext();
@@ -130,7 +136,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 // TODO, we should wait for the ACK from server
                 int total = provider.update(
                         Uri.parse(contentUri),   // The content URI
-                        null, "", new String[]{""}
+                        contentValues, "", new String[]{""}
                 );
                 Log.d("DEBUG", "Locally mark as sent " + total);
             }

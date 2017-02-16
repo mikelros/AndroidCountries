@@ -4,34 +4,24 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SyncRequest;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import es.ithrek.syncadaptercurrencies.R;
 import es.ithrek.syncadaptercurrencies.auth.Authenticator;
-import es.ithrek.syncadaptercurrencies.models.Currency;
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -80,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
         );
+
+        setFloatingButtonListener();
     }
 
     private void setupCustomList(Cursor cursor) {
@@ -183,5 +175,16 @@ public class MainActivity extends AppCompatActivity implements
         // Stop refresh effect
         Toast.makeText(MainActivity.this, "Done!", Toast.LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void setFloatingButtonListener() {
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
+                startActivity(myIntent);
+            }
+        });
     }
 }

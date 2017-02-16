@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"
+        android:weightSum="1"
+        tools:context="es.ithrek.syncadaptercurrencies.activities.AddActivity">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            tools:context="es.ithrek.syncadaptercurrencies.activities.AddActivity">
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="42dp"
+                android:layout_height="50dp"
+                app:srcCompat="@android:drawable/ic_menu_sort_alphabetically" />
+
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:gravity="center"
+                android:hint="EURO" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewAbb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abbreviation" />
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            tools:context="es.ithrek.syncadaptercurrencies.activities.AddActivity">
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="42dp"
+                android:layout_height="50dp"
+                app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+            <EditText
+                android:id="@+id/editTextAbb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:hint="EUR"
+                android:gravity="center" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textViewValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Value" />
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            tools:context="es.ithrek.syncadaptercurrencies.activities.AddActivity">
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="42dp"
+                android:layout_height="50dp"
+                app:srcCompat="@android:drawable/ic_dialog_dialer" />
+
+            <EditText
+                android:id="@+id/editTextValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="1"
+                android:gravity="center"
+                android:inputType="number" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:onClick="addCurrency"
+            android:text="Add new currency" />
+    </LinearLayout>
+
+
+</ScrollView>

@@ -34,10 +34,10 @@ public interface CurrencyApiClient {
 
     @Headers("Accept: application/json")
     @POST("/springPractica/api/currencies/new")
-    Call<Void> create(@Body Currency currency);
+    Call<Integer> create(@Body Currency currency);
 
-    @PUT("/springPractica/api/currencies/update")
-    Call<Void> update(@Body Currency currency);
+    @PUT("/springPractica/api/currencies/update/{id}")
+    Call<Void> update(@Body Currency currency, @Path("id") Integer id);
 
     @DELETE("/springPractica/api/currencies/delete/{id}")
     Call<Void> delete(

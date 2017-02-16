@@ -135,9 +135,9 @@ public class DatabaseContentProvider extends ContentProvider {
         currency.setAbbreviation(values.getAsString("abbreviation"));
         currency.setValue(values.getAsInteger("value"));
         currency.setId_backend(values.getAsInteger("id_backend"));
-        currency.setIs_read(values.getAsInteger("is_read"));
-        getContext().getContentResolver().notifyChange(uri, null);
+
         dbAdapter.insertCurrency(currency);
+        getContext().getContentResolver().notifyChange(uri, null);
         Uri resultUri = Uri.parse("content://es.ithrek.syncadaptercurrencies.sqlprovider/1");
         return resultUri;
 
@@ -148,8 +148,14 @@ public class DatabaseContentProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         Log.d("PELLODEBUG", "CP> " + uri);
+        Currency currency = new Currency();
+        currency.setId(values.getAsInteger("_id"));
+        currency.setName(values.getAsString("name"));
+        currency.setAbbreviation(values.getAsString("abbreviation"));
+        currency.setValue(values.getAsInteger("value"));
+        currency.setId_backend(values.getAsInteger("id_backend"));
         getContext().getContentResolver().notifyChange(uri, null);
-        return dbAdapter.setCurrencyBackendReceived();
+        return dbAdapter.updateCurrency(currency.getId(), currency);
 
     }
 }

@@ -16,8 +16,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class CurrencyManager {
-    private static final String URL = "http://192.168.1.197:8080"; //replace with real URL
-    //private static final String URL = "http://172.30.1.72:8080"; //replace with real URL
+    //private static final String URL = "http://192.168.1.197:8080"; //replace with real URL
+    static final String URL = "http://172.30.1.72:8080"; //replace with real URL
+    //private static final String URL = "http://192.168.43.197:8080"; //replace with real URL
 
     private CurrencyApiClient currencyApiClient;
 
@@ -105,21 +106,18 @@ public class CurrencyManager {
      * @param currency
      * @return
      */
-    public boolean createCurrency(Currency currency) {
-        Log.d("DEBUG", "CREATE CURRENCY TRYING TO INSERT: " + currency.toString());
-        Call<Void> currencyApiCall = currencyApiClient.create(currency);
-        boolean result = false;
-
-        Log.d("DEBUG", "CREATE CURRENCY RESULT: " + String.valueOf(result));
+    public int createCurrency(Currency currency) {
+        Call<Integer> currencyApiCall = currencyApiClient.create(currency);
+        Integer id = null;
 
         try {
-            result = currencyApiCall.execute().isSuccessful();
+            id = currencyApiCall.execute().body();
         } catch (IOException e) {
             System.err.println("Error calling currency API");
             e.printStackTrace();
         }
 
-        return result;
+        return id.intValue();
     }
 
     /**
@@ -128,8 +126,8 @@ public class CurrencyManager {
      * @param currency
      * @return
      */
-    public boolean updateCurrency(Currency currency) {
-        Call<Void> currencyApiCall = currencyApiClient.update(currency);
+    public boolean updateCurrency(Currency currency, Integer id) {
+        Call<Void> currencyApiCall = currencyApiClient.update(currency, id);
         boolean result = false;
 
         try {

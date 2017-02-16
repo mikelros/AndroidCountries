@@ -91,7 +91,7 @@ public class DbAdapter {
      * @return Cursor
      */
     public Cursor getCurrencies() {
-        return db.query("currency", new String[]{"_id", "name", "value", "abbreviation", "id_backend", "is_read"}, null, null, null, null, null);
+        return db.query("currency", new String[]{"_id", "name", "value", "abbreviation", "id_backend"}, null, null, null, null, null);
     }
 
     /**
@@ -102,7 +102,7 @@ public class DbAdapter {
      * @throws SQLException
      */
     public Cursor getCurrency(long id) throws SQLException {
-        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "value", "abbreviation", "id_backend", "is_read"},
+        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
                 "_id =?", new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (row != null) {
@@ -118,7 +118,7 @@ public class DbAdapter {
      * @throws SQLException
      */
     public Cursor getLastLocalRow() throws SQLException {
-        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "abbreviation", "value", "id_backend", "is_read"},
+        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "abbreviation", "value", "id_backend"},
                 "id_backend = 0", null, null, null, null, null); // limit 1 ???
 
         if (row != null) {
@@ -126,6 +126,7 @@ public class DbAdapter {
         }
         return row;
     }
+
 
     public int setCurrencyBackendReceived() throws SQLException {
         ContentValues row = new ContentValues();
@@ -142,7 +143,7 @@ public class DbAdapter {
      * @throws SQLException
      */
     public Cursor getLastBackendRow() throws SQLException {
-        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "abbreviation", "value", "id_backend", "is_read"},
+        Cursor row = db.query(true, "currency", new String[]{"_id", "name", "abbreviation", "value", "id_backend"},
                 null, null, null, null, "id_backend DESC", " 1");
 
         if (row != null) {
@@ -167,7 +168,6 @@ public class DbAdapter {
         row.put("abbreviation", currency.getAbbreviation());
         row.put("value", currency.getValue());
         row.put("id_backend", currency.getId_backend());
-        row.put("is_read", currency.getIs_read());
 
         return db.update("currency", row, "_id=?", new String[]{String.valueOf(id)});
     }
