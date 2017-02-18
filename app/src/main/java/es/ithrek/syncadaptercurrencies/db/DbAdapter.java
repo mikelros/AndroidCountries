@@ -82,7 +82,38 @@ public class DbAdapter {
      * @return # of modified rows
      */
     public int deleteCurrency(long id) {
+        addToDeleted(id);
         return db.delete("currency", "_id=?", new String[]{String.valueOf(id)});
+    }
+
+    /**
+     * Removes all rows from deleted
+     *
+     * @return # of modified rows
+     */
+    public int deleteDeleted() {
+        return db.delete("deleted", null, null);
+    }
+
+    private void addToDeleted(long id) {
+        Cursor cursor = db.query(true, "currency", new String[]{"id_backend"}, "_id=?", new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        int id_backend = cursor.getInt(cursor.getColumnIndex("id_backend"));
+
+        ContentValues row = new ContentValues();
+        row.put("id_backend", id_backend);
+
+        db.insert("deleted", null, row);
+    }
+
+    public Cursor getDeleted() {
+        return db.query("deleted", new String[]{"id_backend"}, null, null, null, null, null);
+    }
+
+    public Cursor getUpdated() {
+        return db.query("updated", new String[]{"_id", "name", "value", "abbreviation", "id_backend"}, null, null, null, null, null);
     }
 
     /**
@@ -161,6 +192,8 @@ public class DbAdapter {
      * @return int # of modified rows
      */
     public int updateCurrency(long id, Currency currency) {
+        addToUpdated(id, currency);
+
         ContentValues row = new ContentValues();
 
         row.put("name", currency.getName());
@@ -171,6 +204,23 @@ public class DbAdapter {
 
         return db.update("currency", row, "_id=?", new String[]{String.valueOf(id)});
     }
+
+    private long addToUpdated(long id, Currency currency) {
+        ContentValues row = new ContentValues();
+        row.put("_id", id);
+        row.put("name", currency.getName());
+        row.put("value", currency.getValue());
+        row.put("abbreviation", currency.getAbbreviation());
+        row.put("id_backend", currency.getId_backend());
+
+
+        return db.insert("updated", null, row);
+    }
+
+    public int deleteUpdated() {
+        return db.delete("updated", null, null);
+    }
+
 
 
 }

@@ -15,9 +15,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import es.ithrek.syncadaptercurrencies.R;
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setupCustomList(Cursor cursor) {
+
         customizedListAdapter = new CustomListAdapter(this, cursor);
 
         listView = (ListView) findViewById(R.id.listView);
@@ -90,6 +94,39 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        registerForContextMenu(listView);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.setHeaderTitle("Actions");
+        menu.add(1, 0, 0, "Update");
+        menu.add(1, 1, 1, "Delete");
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case 0:
+                //Toast.makeText(MainActivity.this, "Holded " + info.id, Toast.LENGTH_LONG).show();
+                Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
+                myIntent.putExtra("_id", info.id);
+                startActivity(myIntent);
+                break;
+            case 1:
+                getContentResolver().delete(
+                        Uri.parse(contentUri + "/delete/currencies"),
+                        null,
+                        new String[]{String.valueOf(info.id)}
+                );
+                customizedListAdapter.notifyDataSetChanged();
+                getLoaderManager().getLoader(0).forceLoad();
+                break;
+        }
+
+        return true;
     }
 
     public static Account CreateSyncAccount(Context context) {

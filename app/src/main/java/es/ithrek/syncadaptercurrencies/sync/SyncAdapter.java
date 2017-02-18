@@ -59,6 +59,65 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
 
+            /////////////////////DELETE LOCAL TO BACKEND
+            cursor = provider.query(
+                    Uri.parse(contentUri + "/deleted"),
+                    new String[]{"id_backend"},
+                    "",
+                    new String[]{""},
+                    "");
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                ContentValues contentValues = null;
+                while (cursor.isAfterLast() == false) {
+                    currencyManager.deleteCurrency(cursor.getInt(cursor.getColumnIndex("id_backend")));
+                    cursor.moveToNext();
+                }
+            }
+
+            //DELETE ALL FROM DELETED
+            int rows = provider.delete(
+                    Uri.parse(contentUri + "/delete/deleted"),
+                    null,
+                    null
+            );
+
+            Log.d("DEBUG", "Deleted from deleted " + rows + " # of rows");
+
+
+            ///////////////UPDATE LOCAL TO BACKEND
+            cursor = provider.query(
+                    Uri.parse(contentUri + "/updated"),
+                    new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
+                    "",
+                    new String[]{""},
+                    "");
+
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                ContentValues contentValues = null;
+                while (cursor.isAfterLast() == false) {
+                    Currency currency = new Currency();
+                    currency.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                    currency.setName(cursor.getString(cursor.getColumnIndex("name")));
+                    currency.setValue(cursor.getInt(cursor.getColumnIndex("value")));
+                    currency.setAbbreviation(cursor.getString(cursor.getColumnIndex("abbreviation")));
+                    currency.setId_backend(cursor.getInt(cursor.getColumnIndex("id_backend")));
+
+                    currencyManager.updateCurrency(currency, currency.getId_backend());
+                    cursor.moveToNext();
+                }
+            }
+
+            //DELETE ALL FROM UPDATED
+            rows = provider.delete(
+                    Uri.parse(contentUri + "/delete/updated"),
+                    null,
+                    null
+            );
+
+
             /////////////////// UPDATE FROM BACKEND /////////////////////
             // Get Last backend_id locally
             cursor = provider.query(

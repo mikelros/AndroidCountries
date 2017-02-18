@@ -13,12 +13,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "currencies.db";
     public static final int DB_VERSION = 1;
-    public static final String SQLDDL = "CREATE TABLE currency" +
+    public static final String SQLDDLCURRENCY = "CREATE TABLE currency" +
             " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " abbreviation TEXT NOT NULL," +
             " name TEXT NOT NULL," +
             " value REAL NOT NULL," +
             " id_backend INTEGER NOT NULL DEFAULT 0);";
+    public static final String SQLDDLDELETED = "CREATE TABLE deleted" +
+            " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "id_backend INTEGER NOT NULL);";
+    public static final String SQLDDLUPDATED = "CREATE TABLE updated" +
+            " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " abbreviation TEXT NOT NULL," +
+            " name TEXT NOT NULL," +
+            " value REAL NOT NULL," +
+            " id_backend INTEGER NOT NULL);";
 
 
     /**
@@ -35,7 +44,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS currency");
-        db.execSQL(SQLDDL);
+        db.execSQL("DROP TABLE IF EXISTS deleted");
+        db.execSQL("DROP TABLE IF EXISTS updated");
+        db.execSQL(SQLDDLCURRENCY);
+        db.execSQL(SQLDDLDELETED);
+        db.execSQL(SQLDDLUPDATED);
+
 
         Log.d("DEBUG", "Ok, DB CREATED!");
     }
@@ -49,7 +63,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Log.w("SqLiteHelper", "Upgrading from version " + oldVersion
                 + " to " + newVersion + ". Data will be wiped.");
 
-        db.execSQL("DROP TABLE IF EXISTS tasks");
+        db.execSQL("DROP TABLE IF EXISTS currency");
+        db.execSQL("DROP TABLE IF EXISTS deleted");
+        db.execSQL("DROP TABLE IF EXISTS updated");
         onCreate(db);
 
         Log.d("DEBUG", "Ok, DB RECREATED!");

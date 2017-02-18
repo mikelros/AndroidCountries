@@ -56,8 +56,8 @@ public class DatabaseContentProvider extends ContentProvider {
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currencies
         uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currencies/", 1);
 
-        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currency/2
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currency/*/", 2);
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currency/id
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currency/id/", 2);
 
         // the last one from the backend
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currencies/last/backend
@@ -65,6 +65,21 @@ public class DatabaseContentProvider extends ContentProvider {
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./currencies/last/local
         uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currencies/last/local", 4);
+
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./deleted
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "deleted", 5);
+
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/deleted
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/deleted", 6);
+
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/currencies
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/currencies", 7);
+
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/updated
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/updated", 8);
+
+        // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./updated
+        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "updated", 9);
 
     }
 
@@ -90,7 +105,7 @@ public class DatabaseContentProvider extends ContentProvider {
                 return c;
             case 2:
                 Log.d("PELLODEBUG", "query to 2. " + uri.getLastPathSegment());
-                //return dbAdapter.getCurrency();
+                return dbAdapter.getCurrency(Integer.valueOf(selectionArgs[0]));
             case 3:
                 Log.d("PELLODEBUG", "query to 3. " + uri.getLastPathSegment());
                 c = dbAdapter.getLastBackendRow();
@@ -101,7 +116,16 @@ public class DatabaseContentProvider extends ContentProvider {
                 c = dbAdapter.getLastLocalRow();
                 c.setNotificationUri(cr, uri);
                 return c;
-
+            case 5:
+                Log.d("PELLODEBUG", "query to 5. " + uri.getLastPathSegment());
+                c = dbAdapter.getDeleted();
+                c.setNotificationUri(cr, uri);
+                return c;
+            case 9:
+                Log.d("PELLODEBUG", "query to 9. " + uri.getLastPathSegment());
+                c = dbAdapter.getUpdated();
+                c.setNotificationUri(cr, uri);
+                return c;
             default:
                 break;
         }
@@ -112,9 +136,27 @@ public class DatabaseContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        Log.d("DEBUG", "CP> " + uri);
+        Log.d("DEBUG", "ContentProvider> delete " + uri + " match:" + uriMatcher.match(uri));
         // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        int rows = 0;
+        switch (uriMatcher.match(uri)) {
+            case 6:
+                rows = dbAdapter.deleteDeleted();
+                getContext().getContentResolver().notifyChange(uri, null);
+                return rows;
+            case 7:
+                rows = dbAdapter.deleteCurrency(Integer.valueOf(selectionArgs[0]));
+                getContext().getContentResolver().notifyChange(uri, null);
+                return rows;
+            case 8:
+                rows = dbAdapter.deleteUpdated();
+                getContext().getContentResolver().notifyChange(uri, null);
+                return rows;
+            default:
+                break;
+        }
+        return rows;
+
     }
 
     @Override
