@@ -1,12 +1,9 @@
 package es.ithrek.syncadaptercurrencies.backend;
 
-import android.util.Log;
-
-import es.ithrek.syncadaptercurrencies.models.Currency;
-
 import java.io.IOException;
 import java.util.List;
 
+import es.ithrek.syncadaptercurrencies.models.Currency;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -17,8 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CurrencyManager {
     private static final String URL = "http://192.168.1.197:8080"; //replace with real URL
-    //private static final String URL = "http://172.30.1.72:8080"; //replace with real URL
-    //private static final String URL = "http://192.168.43.197:8080"; //replace with real URL
 
     private CurrencyApiClient currencyApiClient;
 

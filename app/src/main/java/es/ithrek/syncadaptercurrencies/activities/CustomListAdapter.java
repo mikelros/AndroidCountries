@@ -25,8 +25,6 @@ public class CustomListAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        //https://github.com/codepath/android_guides/wiki/Populating-a-ListView-with-a-CursorAdapter
-        //http://rajeevranganathan.blogspot.com.es/2012/07/creating-custom-cursor-adapter-and.html
         return LayoutInflater.from(context).inflate(R.layout.list_row, parent, false);
     }
 

@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import es.ithrek.syncadaptercurrencies.R;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // With intervals
         //long interval = 24*60*60; // 12 hours
-        //contentResolver.addPeriodicSync(account, authority, bundle, 5);
+        //contentResolver.addPeriodicSync(account, authority, bundle, interval);
 
         // Listener for the swipe down gesture
         swipeRefreshLayout.setOnRefreshListener(
@@ -85,15 +84,6 @@ public class MainActivity extends AppCompatActivity implements
 
         listView.setAdapter(customizedListAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
-                //myIntent.putExtra("Meetup", meetups.get(position));
-                //startActivity(myIntent);
-            }
-        });
-
         registerForContextMenu(listView);
     }
 
@@ -110,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case 0:
-                //Toast.makeText(MainActivity.this, "Holded " + info.id, Toast.LENGTH_LONG).show();
                 Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
                 myIntent.putExtra("_id", info.id);
                 startActivity(myIntent);

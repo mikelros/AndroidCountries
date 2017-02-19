@@ -190,13 +190,16 @@ public class DatabaseContentProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         Log.d("PELLODEBUG", "CP> " + uri);
+
         Currency currency = new Currency();
         currency.setId(values.getAsInteger("_id"));
         currency.setName(values.getAsString("name"));
         currency.setAbbreviation(values.getAsString("abbreviation"));
         currency.setValue(values.getAsInteger("value"));
         currency.setId_backend(values.getAsInteger("id_backend"));
+
         getContext().getContentResolver().notifyChange(uri, null);
+
         return dbAdapter.updateCurrency(currency.getId(), currency);
 
     }

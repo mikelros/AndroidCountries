@@ -158,15 +158,6 @@ public class DbAdapter {
         return row;
     }
 
-
-    public int setCurrencyBackendReceived() throws SQLException {
-        ContentValues row = new ContentValues();
-
-        row.put("id_backend", -1);
-
-        return db.update("currency", row, "id_backend=0", null);
-    }
-
     /**
      * Gets the last row downloaded by the server
      *
@@ -220,7 +211,6 @@ public class DbAdapter {
     public int deleteUpdated() {
         return db.delete("updated", null, null);
     }
-
 
 
 }

@@ -3,8 +3,8 @@ package es.ithrek.syncadaptercurrencies.activities;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,8 +92,6 @@ public class AddActivity extends AppCompatActivity {
 
         contentValues.put("id_backend", 0);
 
-
-        // We finally make the request to the content provider
         Uri resultUri = getContentResolver().insert(
                 uri,   // The content URI
                 contentValues
