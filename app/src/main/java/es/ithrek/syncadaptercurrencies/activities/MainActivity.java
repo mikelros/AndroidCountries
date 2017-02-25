@@ -20,9 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import es.ithrek.syncadaptercurrencies.R;
+import es.ithrek.syncadaptercurrencies.Util;
 import es.ithrek.syncadaptercurrencies.auth.Authenticator;
 
 public class MainActivity extends AppCompatActivity implements
@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Util u = new Util();
+        u.useStaticContext(getApplicationContext());
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onRefresh() {
                         Log.i("PELLODEBUG", "Update data");
-                        Toast.makeText(MainActivity.this, "Refreshing...", Toast.LENGTH_LONG).show();
                         MainActivity.this.syncNow(null);
                     }
                 }
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements
                 );
                 customizedListAdapter.notifyDataSetChanged();
                 getLoaderManager().getLoader(0).forceLoad();
+                Util.notify(null, "Currency deleted", "Currency " + info.id + " is deleted");
                 break;
         }
 
@@ -193,13 +196,14 @@ public class MainActivity extends AppCompatActivity implements
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // Performing a sync no matter if it's off
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // Performing a sync no matter if it's off
-        // Simple option, will ahndle everything smartly
+        // Simple option, will handle everything smartly
         contentResolver = getContentResolver();
         contentResolver.requestSync(account, "es.ithrek.syncadaptercurrencies.sqlprovider", bundle);
         Log.d("PELLODEBUG", "Sync now was pressed");
 
+        // No need to notify, just trying to make it work
+        Util.notify(view, "List updated", "List was just updated");
         // Stop refresh effect
-        Toast.makeText(MainActivity.this, "Done!", Toast.LENGTH_SHORT).show();
         swipeRefreshLayout.setRefreshing(false);
     }
 

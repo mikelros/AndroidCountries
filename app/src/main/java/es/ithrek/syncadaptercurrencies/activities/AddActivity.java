@@ -5,12 +5,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import es.ithrek.syncadaptercurrencies.R;
+import es.ithrek.syncadaptercurrencies.Util;
 import es.ithrek.syncadaptercurrencies.models.Currency;
 
 public class AddActivity extends AppCompatActivity {
@@ -26,6 +27,9 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
+        Util u = new Util();
+        u.useStaticContext(getApplicationContext());
+
         editTextName = (EditText) findViewById(R.id.editTextName);
         editTextAbb = (EditText) findViewById(R.id.editTextAbb);
         editTextValue = (EditText) findViewById(R.id.editTextValue);
@@ -35,6 +39,7 @@ public class AddActivity extends AppCompatActivity {
         if (extras != null) {
             Long id = extras.getLong("_id");
             if (id != null) {
+                Log.d("DEBUG", "Id not null in add: " + id);
                 Cursor cursor = getContentResolver().query(
                         Uri.parse(contentUri + "/currency/id"),   // The content URI
                         new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
@@ -86,7 +91,7 @@ public class AddActivity extends AppCompatActivity {
                     null,
                     null
             );
-            Toast.makeText(AddActivity.this, "Updated", Toast.LENGTH_LONG).show();
+            Util.notify(view, "Updated", "Currency " + currency.getId() + " is updated");
             return;
         }
 
@@ -97,7 +102,6 @@ public class AddActivity extends AppCompatActivity {
                 contentValues
         );
 
-        Toast.makeText(AddActivity.this, "Inserted", Toast.LENGTH_LONG).show();
-
+        Util.notify(view, "Inserted", "Currency " + String.valueOf(editTextName.getText()) + " is inserted");
     }
 }
