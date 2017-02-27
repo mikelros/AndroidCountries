@@ -57,6 +57,8 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
+
+        <activity android:name=".activities.LoginActivity"></activity>
     </application>
 
 </manifest>
