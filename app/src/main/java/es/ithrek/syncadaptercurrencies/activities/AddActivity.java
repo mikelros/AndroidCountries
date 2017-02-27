@@ -10,13 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.R;
 import es.ithrek.syncadaptercurrencies.Util;
 import es.ithrek.syncadaptercurrencies.models.Currency;
 
 public class AddActivity extends AppCompatActivity {
 
-    private String contentUri = "content://es.ithrek.syncadaptercurrencies.sqlprovider";
     private EditText editTextName, editTextAbb, editTextValue;
     private Button button;
     private boolean isUpdating = false;
@@ -37,12 +37,12 @@ public class AddActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            Long id = extras.getLong("_id");
+            Long id = extras.getLong(Contract.CURRENCY_ID);
             if (id != null) {
                 Log.d("DEBUG", "Id not null in add: " + id);
                 Cursor cursor = getContentResolver().query(
-                        Uri.parse(contentUri + "/currency/id"),   // The content URI
-                        new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
+                        Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_ONE_CURRENCY),   // The content URI
+                        new String[]{Contract.CURRENCY_ID, Contract.CURRENCY_NAME, Contract.CURRENCY_VALUE, Contract.CURRENCY_ABBREVIATION, Contract.CURRENCY_ID_BACKEND},
                         "",                        // The columns to return for each row
                         new String[]{String.valueOf(id)},                     // Selection criteria
                         ""
@@ -53,11 +53,11 @@ public class AddActivity extends AppCompatActivity {
                     currency = new Currency();
                     cursor.moveToFirst();
                     while (cursor.isAfterLast() == false) {
-                        currency.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                        currency.setName(cursor.getString(cursor.getColumnIndex("name")));
-                        currency.setValue(cursor.getInt(cursor.getColumnIndex("value")));
-                        currency.setAbbreviation(cursor.getString(cursor.getColumnIndex("abbreviation")));
-                        currency.setId_backend(cursor.getInt(cursor.getColumnIndex("id_backend")));
+                        currency.setId(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID)));
+                        currency.setName(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_NAME)));
+                        currency.setValue(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_VALUE)));
+                        currency.setAbbreviation(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_ABBREVIATION)));
+                        currency.setId_backend(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID_BACKEND)));
 
                         editTextName.setText(currency.getName());
                         editTextAbb.setText(currency.getAbbreviation());
@@ -74,16 +74,16 @@ public class AddActivity extends AppCompatActivity {
 
     public void addCurrency(View view) {
         ContentValues contentValues = new ContentValues();
-        Uri uri = Uri.parse(contentUri);
+        Uri uri = Uri.parse(Contract.CONTENT_URI);
 
-        contentValues.put("name", String.valueOf(editTextName.getText()));
-        contentValues.put("abbreviation", String.valueOf(editTextAbb.getText()));
-        contentValues.put("value", Integer.valueOf(String.valueOf(editTextValue.getText())));
+        contentValues.put(Contract.CURRENCY_NAME, String.valueOf(editTextName.getText()));
+        contentValues.put(Contract.CURRENCY_ABBREVIATION, String.valueOf(editTextAbb.getText()));
+        contentValues.put(Contract.CURRENCY_VALUE, Integer.valueOf(String.valueOf(editTextValue.getText())));
 
 
         if (isUpdating) {
-            contentValues.put("_id", currency.getId());
-            contentValues.put("id_backend", currency.getId_backend());
+            contentValues.put(Contract.CURRENCY_ID, currency.getId());
+            contentValues.put(Contract.CURRENCY_ID_BACKEND, currency.getId_backend());
 
             int rows = getContentResolver().update(
                     uri,
@@ -95,7 +95,7 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        contentValues.put("id_backend", 0);
+        contentValues.put(Contract.CURRENCY_ID_BACKEND, 0);
 
         Uri resultUri = getContentResolver().insert(
                 uri,   // The content URI

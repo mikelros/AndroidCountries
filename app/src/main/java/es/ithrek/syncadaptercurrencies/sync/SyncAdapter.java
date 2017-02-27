@@ -16,6 +16,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.backend.CurrencyManager;
 import es.ithrek.syncadaptercurrencies.models.Currency;
 
@@ -27,7 +28,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private final AccountManager mAccountManager;
     private ContentResolver contentResolver;
     private CurrencyManager currencyManager;
-    private String contentUri = "content://es.ithrek.syncadaptercurrencies.sqlprovider";
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -77,8 +77,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void deleteLocalOnBackend(Cursor cursor, ContentProviderClient provider) throws RemoteException {
         cursor = provider.query(
-                Uri.parse(contentUri + "/deleted"),
-                new String[]{"id_backend"},
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_ALL_DELETED),
+                new String[]{Contract.CURRENCY_ID_BACKEND},
                 "",
                 new String[]{""},
                 "");
@@ -87,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             cursor.moveToFirst();
             ContentValues contentValues = null;
             while (cursor.isAfterLast() == false) {
-                currencyManager.deleteCurrency(cursor.getInt(cursor.getColumnIndex("id_backend")));
+                currencyManager.deleteCurrency(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID_BACKEND)));
                 cursor.moveToNext();
             }
         }
@@ -95,7 +95,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void deleteAllFromDeleted(ContentProviderClient provider) throws RemoteException {
         int rows = provider.delete(
-                Uri.parse(contentUri + "/delete/deleted"),
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_DELETE_DELETED),
                 null,
                 null
         );
@@ -106,8 +106,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void updateLocalOnBackend(Cursor cursor, ContentProviderClient provider) throws RemoteException {
         cursor = provider.query(
-                Uri.parse(contentUri + "/updated"),
-                new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_ALL_UPDATED),
+                new String[]{Contract.CURRENCY_ID, Contract.CURRENCY_NAME, Contract.CURRENCY_ABBREVIATION, Contract.CURRENCY_VALUE, Contract.CURRENCY_ID_BACKEND},
                 "",
                 new String[]{""},
                 "");
@@ -117,11 +117,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentValues contentValues = null;
             while (cursor.isAfterLast() == false) {
                 Currency currency = new Currency();
-                currency.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                currency.setName(cursor.getString(cursor.getColumnIndex("name")));
-                currency.setValue(cursor.getInt(cursor.getColumnIndex("value")));
-                currency.setAbbreviation(cursor.getString(cursor.getColumnIndex("abbreviation")));
-                currency.setId_backend(cursor.getInt(cursor.getColumnIndex("id_backend")));
+                currency.setId(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID)));
+                currency.setName(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_NAME)));
+                currency.setValue(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_VALUE)));
+                currency.setAbbreviation(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_ABBREVIATION)));
+                currency.setId_backend(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID_BACKEND)));
 
                 currencyManager.updateCurrency(currency, currency.getId_backend());
                 cursor.moveToNext();
@@ -131,7 +131,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void deleteAllFromUpdated(ContentProviderClient provider) throws RemoteException {
         int rows = provider.delete(
-                Uri.parse(contentUri + "/delete/updated"),
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_DELETE_UPDATED),
                 null,
                 null
         );
@@ -142,15 +142,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Get Last backend_id locally
         cursor = provider.query(
-                Uri.parse(contentUri + "/currencies/last/backend"),
-                new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_LAST_BACKEND),
+                new String[]{Contract.CURRENCY_ID, Contract.CURRENCY_NAME, Contract.CURRENCY_ABBREVIATION, Contract.CURRENCY_VALUE, Contract.CURRENCY_ID_BACKEND},
                 "",                        // The columns to return for each row
                 new String[]{""},                     // Selection criteria
                 "");
 
         if (cursor.getCount() > 0) {
-            lastBackendId = cursor.getInt(cursor.getColumnIndex("id_backend"));
-            Log.d("DEBUG", "id_backend:" + cursor.getInt(cursor.getColumnIndex("id_backend")));
+            lastBackendId = cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID_BACKEND));
+            Log.d("DEBUG", "id_backend:" + cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID_BACKEND)));
         }
         Log.d("DEBUG'", "Last backend Id: " + lastBackendId);
 
@@ -160,14 +160,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         for (Currency currency : currencies) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put("name", currency.getName());
-            contentValues.put("abbreviation", currency.getAbbreviation());
-            contentValues.put("value", currency.getValue());
-            contentValues.put("id_backend", currency.getId());
+            contentValues.put(Contract.CURRENCY_NAME, currency.getName());
+            contentValues.put(Contract.CURRENCY_ABBREVIATION, currency.getAbbreviation());
+            contentValues.put(Contract.CURRENCY_VALUE, currency.getValue());
+            contentValues.put(Contract.CURRENCY_ID_BACKEND, currency.getId());
 
             // We finally make the request to the content provider
             Uri resultUri = provider.insert(
-                    Uri.parse(contentUri),   // The content URI
+                    Uri.parse(Contract.CONTENT_URI),   // The content URI
                     contentValues
             );
             Log.d("DEBUG", "Inserted in local db: " + currency.getName());
@@ -180,8 +180,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // get all local record with id_backend = 0
         // send them to backend
         cursor = provider.query(
-                Uri.parse(contentUri + "/currencies/last/local"),   // The content URI of the words table
-                new String[]{"_id", "name", "value", "abbreviation", "id_backend"},
+                Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_LAST_LOCAL),   // The content URI of the words table
+                new String[]{Contract.CURRENCY_ID, Contract.CURRENCY_NAME, Contract.CURRENCY_ABBREVIATION, Contract.CURRENCY_VALUE, Contract.CURRENCY_ID_BACKEND},
                 "",                        // The columns to return for each row
                 new String[]{""},                     // Selection criteria
                 "");
@@ -195,21 +195,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             while (cursor.isAfterLast() == false) {
 
                 Currency currency = new Currency();
-                //currency.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                currency.setName(cursor.getString(cursor.getColumnIndex("name")));
-                currency.setValue(cursor.getInt(cursor.getColumnIndex("value")));
-                currency.setAbbreviation(cursor.getString(cursor.getColumnIndex("abbreviation")));
+                currency.setName(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_NAME)));
+                currency.setValue(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_VALUE)));
+                currency.setAbbreviation(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_ABBREVIATION)));
 
                 Log.d("SYNCADAPTER", currency.toString());
                 Log.d("SYNCADAPTER", "cursor: " + cursor.getString(3));
 
                 int id = currencyManager.createCurrency(currency);
                 contentValues = new ContentValues();
-                contentValues.put("_id", cursor.getInt(cursor.getColumnIndex("_id")));
-                contentValues.put("name", currency.getName());
-                contentValues.put("abbreviation", currency.getAbbreviation());
-                contentValues.put("value", currency.getValue());
-                contentValues.put("id_backend", id);
+                contentValues.put(Contract.CURRENCY_ID, cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID)));
+                contentValues.put(Contract.CURRENCY_NAME, currency.getName());
+                contentValues.put(Contract.CURRENCY_ABBREVIATION, currency.getAbbreviation());
+                contentValues.put(Contract.CURRENCY_VALUE, currency.getValue());
+                contentValues.put(Contract.CURRENCY_ID_BACKEND, id);
                 Log.d("DEBUG", "Sent data to backend: " + currency.getName());
 
                 cursor.moveToNext();
@@ -218,7 +217,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             // To mark local records as sent.
             // TODO, we should wait for the ACK from server
             int total = provider.update(
-                    Uri.parse(contentUri),   // The content URI
+                    Uri.parse(Contract.CONTENT_URI),   // The content URI
                     contentValues, "", new String[]{""}
             );
             Log.d("DEBUG", "Locally mark as sent " + total);

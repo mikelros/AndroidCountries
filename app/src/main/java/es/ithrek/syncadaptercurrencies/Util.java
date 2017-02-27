@@ -25,7 +25,7 @@ public class Util {
 
         // Create the notification
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setSmallIcon(R.drawable.logo);
+        mBuilder.setSmallIcon(R.drawable.ic_notification);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(content);
 

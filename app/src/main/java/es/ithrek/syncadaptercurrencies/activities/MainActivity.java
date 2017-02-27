@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.R;
 import es.ithrek.syncadaptercurrencies.Util;
 import es.ithrek.syncadaptercurrencies.auth.Authenticator;
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private ListView listView;
-    private String contentUri = "content://es.ithrek.syncadaptercurrencies.sqlprovider";
     private CustomListAdapter customizedListAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ContentResolver contentResolver;
@@ -53,12 +53,11 @@ public class MainActivity extends AppCompatActivity implements
         getLoaderManager().initLoader(0, null, this);
 
         account = CreateSyncAccount(this);
-        String authority = "es.ithrek.syncadaptercurrencies.sqlprovider";
 
         // Simple option, will handle everything smartly
         contentResolver = getContentResolver();
         Bundle bundle = new Bundle();
-        contentResolver.requestSync(account, authority, bundle);
+        contentResolver.requestSync(account, Contract.AUTHORITY, bundle);
 
         // With intervals
         //long interval = 24*60*60; // 12 hours
@@ -103,12 +102,12 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case 0:
                 Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
-                myIntent.putExtra("_id", info.id);
+                myIntent.putExtra(Contract.CURRENCY_ID, info.id);
                 startActivity(myIntent);
                 break;
             case 1:
                 getContentResolver().delete(
-                        Uri.parse(contentUri + "/delete/currencies"),
+                        Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_DELETE_CURRENCY),
                         null,
                         new String[]{String.valueOf(info.id)}
                 );
@@ -157,11 +156,11 @@ public class MainActivity extends AppCompatActivity implements
         // currently filtering.
         Uri baseUri;
 
-        baseUri = Uri.parse(this.contentUri + "/currencies");
+        baseUri = Uri.parse(Contract.CONTENT_URI + "/" + Contract.PATH_ALL_CURRENCIES);
 
         Log.d("PELLODEBUG", "Creating loader");
         return new CursorLoader(this, baseUri,  // The content URI of the words table
-                new String[]{"_id", "name", "abbreviation", "value"},               // The columns to return for each row
+                new String[]{Contract.CURRENCY_ID, Contract.CURRENCY_NAME, Contract.CURRENCY_ABBREVIATION, Contract.CURRENCY_VALUE},
                 "",                        // Selection criteria parameters
                 new String[]{""},                     // Selection criteria values
                 "");                            // The sort order for the returned rows
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // Performing a sync no matter if it's off
         // Simple option, will handle everything smartly
         contentResolver = getContentResolver();
-        contentResolver.requestSync(account, "es.ithrek.syncadaptercurrencies.sqlprovider", bundle);
+        contentResolver.requestSync(account, Contract.AUTHORITY, bundle);
         Log.d("PELLODEBUG", "Sync now was pressed");
 
         // No need to notify, just trying to make it work

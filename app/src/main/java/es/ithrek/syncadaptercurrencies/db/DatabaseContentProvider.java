@@ -9,6 +9,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.util.Log;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.models.Currency;
 
 /**
@@ -54,32 +55,32 @@ public class DatabaseContentProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currencies
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currencies/", 1);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_ALL_CURRENCIES, 1);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currency/id
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currency/id/", 2);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_ONE_CURRENCY, 2);
 
         // the last one from the backend
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider/currencies/last/backend
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currencies/last/backend", 3);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_LAST_BACKEND, 3);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./currencies/last/local
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "currencies/last/local", 4);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_LAST_LOCAL, 4);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./deleted
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "deleted", 5);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_ALL_DELETED, 5);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/deleted
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/deleted", 6);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_DELETE_DELETED, 6);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/currencies
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/currencies", 7);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_DELETE_CURRENCY, 7);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./delete/updated
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "delete/updated", 8);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_DELETE_UPDATED, 8);
 
         // This will match: content://es.ithrek.syncadaptercurrencies.sqlprovider./updated
-        uriMatcher.addURI("es.ithrek.syncadaptercurrencies.sqlprovider", "updated", 9);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_ALL_UPDATED, 9);
 
     }
 
@@ -172,15 +173,15 @@ public class DatabaseContentProvider extends ContentProvider {
         Log.d("DEBUG", "CP> insert " + uri);
 
         Currency currency = new Currency();
-        currency.setId(values.getAsInteger("id"));
-        currency.setName(values.getAsString("name"));
-        currency.setAbbreviation(values.getAsString("abbreviation"));
-        currency.setValue(values.getAsInteger("value"));
-        currency.setId_backend(values.getAsInteger("id_backend"));
+        currency.setId(values.getAsInteger(Contract.CURRENCY_ID));
+        currency.setName(values.getAsString(Contract.CURRENCY_NAME));
+        currency.setAbbreviation(values.getAsString(Contract.CURRENCY_ABBREVIATION));
+        currency.setValue(values.getAsInteger(Contract.CURRENCY_VALUE));
+        currency.setId_backend(values.getAsInteger(Contract.CURRENCY_ID_BACKEND));
 
         dbAdapter.insertCurrency(currency);
         getContext().getContentResolver().notifyChange(uri, null);
-        Uri resultUri = Uri.parse("content://es.ithrek.syncadaptercurrencies.sqlprovider/1");
+        Uri resultUri = Uri.parse(Contract.CONTENT_URI + Contract.PATH_ALL_CURRENCIES);
         return resultUri;
 
     }
@@ -192,11 +193,11 @@ public class DatabaseContentProvider extends ContentProvider {
         Log.d("PELLODEBUG", "CP> " + uri);
 
         Currency currency = new Currency();
-        currency.setId(values.getAsInteger("_id"));
-        currency.setName(values.getAsString("name"));
-        currency.setAbbreviation(values.getAsString("abbreviation"));
-        currency.setValue(values.getAsInteger("value"));
-        currency.setId_backend(values.getAsInteger("id_backend"));
+        currency.setId(values.getAsInteger(Contract.CURRENCY_ID));
+        currency.setName(values.getAsString(Contract.CURRENCY_NAME));
+        currency.setAbbreviation(values.getAsString(Contract.CURRENCY_ABBREVIATION));
+        currency.setValue(values.getAsInteger(Contract.CURRENCY_VALUE));
+        currency.setId_backend(values.getAsInteger(Contract.CURRENCY_ID_BACKEND));
 
         getContext().getContentResolver().notifyChange(uri, null);
 

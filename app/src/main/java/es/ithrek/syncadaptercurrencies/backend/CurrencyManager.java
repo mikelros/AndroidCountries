@@ -3,6 +3,7 @@ package es.ithrek.syncadaptercurrencies.backend;
 import java.io.IOException;
 import java.util.List;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.models.Currency;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -13,8 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class CurrencyManager {
-    private static final String URL = "http://192.168.1.197:8080"; //replace with real URL
-
     private CurrencyApiClient currencyApiClient;
 
     /**
@@ -22,7 +21,7 @@ public class CurrencyManager {
      */
     public CurrencyManager() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(this.URL)
+                .baseUrl(Contract.URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import es.ithrek.syncadaptercurrencies.Contract;
 import es.ithrek.syncadaptercurrencies.R;
 
 /**
@@ -39,15 +40,15 @@ public class CustomListAdapter extends CursorAdapter {
         }
 
         TextView textViewId = (TextView) v.findViewById(R.id.idIdentifier);
-        textViewId.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex("_id"))));
+        textViewId.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_ID))));
 
         TextView textViewName = (TextView) v.findViewById(R.id.idName);
-        textViewName.setText(cursor.getString(cursor.getColumnIndex("name")));
+        textViewName.setText(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_NAME)));
 
         TextView textViewAbb = (TextView) v.findViewById(R.id.idAbb);
-        textViewAbb.setText(cursor.getString(cursor.getColumnIndex("abbreviation")));
+        textViewAbb.setText(cursor.getString(cursor.getColumnIndex(Contract.CURRENCY_ABBREVIATION)));
 
         TextView textViewValue = (TextView) v.findViewById(R.id.idValue);
-        textViewValue.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex("value"))) + "€");
+        textViewValue.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(Contract.CURRENCY_VALUE))) + "€");
     }
 }
